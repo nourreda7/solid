@@ -70,7 +70,7 @@ class HotelBookingApp:
     def make_booking(self, room_type, guest_name, nights):
         return self.booking_service.book_room(room_type, guest_name, nights)
 
-# استخدام الكود:
+
 credit_card_payment = CreditCardPayment()  
 booking_service = BookingService(credit_card_payment)
 
