@@ -51,16 +51,30 @@ class PaymentService(ABC):
     @abstractmethod
     def process_payment(self, amount):
         pass
+class Payment(ABC):
+    @abstractmethod
+    def process_info(self, amount):
+        pass
 
 class CreditCardPayment(PaymentService):
-    def process_payment(self, amount):
-        
-        return True  
+    def __init__(self, card_number):
+        self.card_number = card_number
 
-class PayPalPayment(PaymentService):
     def process_payment(self, amount):
-    
-        return True  
+        print(f"Processing credit card payment amount: ${amount}")
+        return True
+
+class PayPalPayment(PaymentService,Payment):
+    def __init__(self, email, currency):
+        self.email = email
+        self.currency = currency
+
+    def process_payment(self, amount):
+        print("Processing PayPal payment is Success")
+        return True
+    def process_info(self, amount):
+        print(f"Processing PayPal payment for {self.email}, amount: {amount} {self.currency}")
+        return True
 
 # 5. **Dependency Inversion Principle (DIP)**:
 class HotelBookingApp:
@@ -71,12 +85,17 @@ class HotelBookingApp:
         return self.booking_service.book_room(room_type, guest_name, nights)
 
 
-credit_card_payment = CreditCardPayment()  
-booking_service = BookingService(credit_card_payment)
+credit_card_payment = CreditCardPayment("1234-5678-9876-5432")
+paypal_payment = PayPalPayment("ahmed@example.com",'USD')
+
+booking_service_credit = BookingService(credit_card_payment)
+booking_service_paypal = BookingService(paypal_payment)
 
 standard_room = StandardRoom()
 deluxe_room = DeluxeRoom()
 
-hotel_app = HotelBookingApp(booking_service)
-print(hotel_app.make_booking(standard_room, "John Doe", 3))
-print(hotel_app.make_booking(deluxe_room, "Jane Doe", 2))  
+hotel_app_credit = HotelBookingApp(booking_service_credit)
+hotel_app_paypal = HotelBookingApp(booking_service_paypal)
+
+print(hotel_app_credit.make_booking(standard_room, "Mohamed", 3))
+print(hotel_app_paypal.make_booking(deluxe_room, "Ahmed", 2))
